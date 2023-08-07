@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -41,9 +42,25 @@ public class juegoContenido extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new Controles());
         iniciarJuego();
+
+    }
+
+    public void reiniciarJuego() {
+        cuerpo_serpiente = 3;
+        direccion = 'd';
+        running = true;
+        serpienteX[0] = PANTALLA / 2;
+        serpienteY[0] = PANTALLA / 2;
+        for (int i = 1; i < cuerpo_serpiente; i++) {
+            serpienteX[i] = serpienteX[i - 1] - CUADRITO_SIZE;
+            serpienteY[i] = serpienteY[i - 1];
+
+        }
+        agregarComida();
     }
 
     public void iniciarJuego() {
+
         agregarComida();
         timer = new Timer(DELAY, this);
         timer.start();
@@ -56,30 +73,30 @@ public class juegoContenido extends JPanel implements ActionListener {
 
     public void moverSerpiente() {
         for (int i = cuerpo_serpiente; i > 0; i--) {
-            serpienteX[i] = serpienteX[i-1];
-            serpienteY[i] = serpienteY[i-1];
+            serpienteX[i] = serpienteX[i - 1];
+            serpienteY[i] = serpienteY[i - 1];
 
         }
 
-        switch (direccion){
+        switch (direccion) {
             case 'd':
-                serpienteX [0] = serpienteX[0] + CUADRITO_SIZE;
-            break;
+                serpienteX[0] = serpienteX[0] + CUADRITO_SIZE;
+                break;
             case 'a':
-                serpienteX [0] = serpienteX[0] - CUADRITO_SIZE;
-            break;
+                serpienteX[0] = serpienteX[0] - CUADRITO_SIZE;
+                break;
             case 'w':
-                serpienteY [0] = serpienteY[0] - CUADRITO_SIZE;
-            break;
+                serpienteY[0] = serpienteY[0] - CUADRITO_SIZE;
+                break;
             case 's':
-                serpienteY [0] = serpienteY[0] + CUADRITO_SIZE;
-            break;
-                
+                serpienteY[0] = serpienteY[0] + CUADRITO_SIZE;
+                break;
+
         }
     }
 
     public void checarComida() {
-        if (serpienteX[0] == comidaX && serpienteY[0]==comidaY){
+        if (serpienteX[0] == comidaX && serpienteY[0] == comidaY) {
             cuerpo_serpiente++;
             agregarComida();
         }
@@ -87,16 +104,16 @@ public class juegoContenido extends JPanel implements ActionListener {
     }
 
     public void checarColisiones() {
-        if(serpienteX [0] <0 ) {
+        if (serpienteX[0] < 0) {
             running = false;
         }
-        if (serpienteY [0]< 0){
+        if (serpienteY[0] < 0) {
             running = false;
         }
-        if(serpienteX [0] >PANTALLA-CUADRITO_SIZE ) {
+        if (serpienteX[0] > PANTALLA - CUADRITO_SIZE) {
             running = false;
         }
-        if (serpienteY [0]> PANTALLA-CUADRITO_SIZE){
+        if (serpienteY[0] > PANTALLA - CUADRITO_SIZE) {
             running = false;
         }
 
@@ -109,8 +126,20 @@ public class juegoContenido extends JPanel implements ActionListener {
             checarComida();
             checarColisiones();
 
+        }else{
+            timer.stop();
+           int choice = JOptionPane.showConfirmDialog(this, "PERDISTE ¿QUIERES VOLVER A JUGAR?", "TRY AGAIN", JOptionPane.YES_NO_OPTION);
+
+           if (choice == JOptionPane.YES_OPTION){
+               reiniciarJuego();
+               timer.start();
+           }else{
+               System.exit(0);
+           }
         }
         repaint();
+        
+        
     }
 
     @Override
@@ -133,22 +162,22 @@ public class juegoContenido extends JPanel implements ActionListener {
     public class Controles extends KeyAdapter {
 
         @Override
-        public void keyPressed(KeyEvent e){
-            switch(e.getKeyChar()){
+        public void keyPressed(KeyEvent e) {
+            switch (e.getKeyChar()) {
                 case 'w':
                     direccion = 'w';
                     break;
-                    case 'a':
+                case 'a':
                     direccion = 'a';
                     break;
-                    case 's':
+                case 's':
                     direccion = 's';
                     break;
-                    case 'd':
+                case 'd':
                     direccion = 'd';
                     break;
             }
-            
+
         }
     }
 }
